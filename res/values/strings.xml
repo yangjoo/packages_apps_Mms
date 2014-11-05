@@ -801,4 +801,8 @@
     <string name="banner_sms_promo_title_application"><xliff:g id="appName">%s</xliff:g> is your SMS app</string>
     <string name="banner_sms_promo_message">You can change this in Settings</string>
 
+    <!-- Preferences -->
+    <string name="pref_title_mms_enter_action">Enter key behaviour</string>
+    <string name="pref_mms_enter_new_line">Force newline</string>
+    <string name="pref_mms_enter_default">Default</string>
 </resources>

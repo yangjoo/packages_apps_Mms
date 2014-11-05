@@ -355,4 +355,8 @@
     <string name="banner_sms_promo_title_initial" msgid="510014388581481569">"기본 SMS 앱으로 \'메시지\'를 사용하고 있지 않습니다."</string>
     <string name="banner_sms_promo_title_application" msgid="8123569785369713254">"기본 SMS 앱으로 <xliff:g id="APPNAME">%s</xliff:g>을(를) 사용하고 있습니다."</string>
     <string name="banner_sms_promo_message" msgid="3536714414252763826">"설정에서 변경할 수 있습니다."</string>
+
+    <string name="pref_title_mms_enter_action">엔터 키 기능</string>
+    <string name="pref_mms_enter_new_line">다음 줄 이동</string>
+    <string name="pref_mms_enter_default">기본값</string>
 </resources>

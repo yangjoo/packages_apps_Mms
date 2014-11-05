@@ -111,5 +111,12 @@
                         android:title="@string/pref_title_notification_vibrateWhen"
                         android:dependency="pref_key_enable_notifications"
                         android:defaultValue="false" />
+
+    <ListPreference
+        android:key="pref_key_mms_enter_action"
+        android:title="@string/pref_title_mms_enter_action"
+        android:entries="@array/pref_mms_enter_action_entries"
+        android:entryValues="@array/pref_mms_enter_action_values" />
+
   </PreferenceCategory>
 </PreferenceScreen>

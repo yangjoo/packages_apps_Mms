@@ -56,6 +56,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -72,6 +73,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemProperties;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.QuickContact;
 import android.provider.Telephony;
@@ -343,6 +345,9 @@ public class ComposeMessageActivity extends Activity
     // keys for extras and icicles
     public final static String THREAD_ID = "thread_id";
     private final static String RECIPIENTS = "recipients";
+
+    // Enter key action: Send or insert newline
+    private int mEnterAction;
 
     @SuppressWarnings("unused")
     public static void log(String logMsg) {
@@ -1866,7 +1871,13 @@ public class ComposeMessageActivity extends Activity
         mIsSmsEnabled = MmsConfig.isSmsEnabled(this);
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences((Context) ComposeMessageActivity.this);
+
         resetConfiguration(getResources().getConfiguration());
+
+        mEnterAction = prefs.getInt(MessagingPreferenceActivity.ENTER_ACTION_VALUE,
+                MessagingPreferenceActivity.ENTER_DEFAULT);
 
         setContentView(R.layout.compose_message_activity);
         setProgressBarVisibility(false);
@@ -3415,7 +3426,8 @@ public class ComposeMessageActivity extends Activity
         if (event != null) {
             // if shift key is down, then we want to insert the '\n' char in the TextView;
             // otherwise, the default action is to send the message.
-            if (!event.isShiftPressed() && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (!event.isShiftPressed() && event.getAction() == KeyEvent.ACTION_DOWN &&
+                mEnterAction == MessagingPreferenceActivity.ENTER_DEFAULT) {
                 if (isPreparedForSending()) {
                     confirmSendMessageIfNeeded();
                 }

@@ -29,6 +29,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
@@ -68,6 +69,12 @@ public class MessagingPreferenceActivity extends PreferenceActivity
     public static final String AUTO_DELETE              = "pref_key_auto_delete";
     public static final String GROUP_MMS_MODE           = "pref_key_mms_group_mms";
 
+    // Enter key action
+    public static final String ENTER_ACTION              = "pref_key_mms_enter_action";
+    public static final String ENTER_ACTION_VALUE        = "pref_key_mms_enter_action_value";
+    public static final int ENTER_DEFAULT                = 0;
+    public static final int ENTER_NEW_LINE               = 1;
+
     // Menu entries
     private static final int MENU_RESTORE_DEFAULTS    = 1;
 
@@ -95,6 +102,9 @@ public class MessagingPreferenceActivity extends PreferenceActivity
     private Recycler mSmsRecycler;
     private Recycler mMmsRecycler;
     private static final int CONFIRM_CLEAR_SEARCH_HISTORY_DIALOG = 3;
+
+    private ListPreference mEnterAction;
+    private CharSequence[] mEnterActionEntries;
 
     // Whether or not we are currently enabled for SMS. This field is updated in onResume to make
     // sure we notice if the user has changed the default SMS app.
@@ -169,6 +179,9 @@ public class MessagingPreferenceActivity extends PreferenceActivity
         mVibratePref = (CheckBoxPreference) findPreference(NOTIFICATION_VIBRATE);
         mRingtonePref = (RingtonePreference) findPreference(NOTIFICATION_RINGTONE);
 
+        mEnterAction = (ListPreference) findPreference(ENTER_ACTION);
+        mEnterActionEntries = getResources().getTextArray(R.array.pref_mms_enter_action_entries);
+
         setMessagePreferences();
     }
 
@@ -223,7 +236,7 @@ public class MessagingPreferenceActivity extends PreferenceActivity
 
         // If needed, migrate vibration setting from the previous tri-state setting stored in
         // NOTIFICATION_VIBRATE_WHEN to the boolean setting stored in NOTIFICATION_VIBRATE.
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPreferences.contains(NOTIFICATION_VIBRATE_WHEN)) {
             String vibrateWhen = sharedPreferences.
                     getString(MessagingPreferenceActivity.NOTIFICATION_VIBRATE_WHEN, null);
@@ -234,6 +247,19 @@ public class MessagingPreferenceActivity extends PreferenceActivity
             prefsEditor.apply();
             mVibratePref.setChecked(vibrate);
         }
+
+        int enterAction = sharedPreferences.getInt(ENTER_ACTION_VALUE, ENTER_DEFAULT);
+        mEnterAction.setValue(String.valueOf(enterAction));
+        mEnterAction.setSummary(mEnterActionEntries[enterAction]);
+        mEnterAction.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                int value = Integer.parseInt((String) newValue);
+                sharedPreferences.edit().putInt(ENTER_ACTION_VALUE, value).commit();
+                mEnterAction.setSummary(mEnterActionEntries[value]);
+                return true;
+            }
+        });
 
         mSmsRecycler = Recycler.getSmsRecycler();
         mMmsRecycler = Recycler.getMmsRecycler();
